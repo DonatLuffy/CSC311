@@ -1,16 +1,13 @@
 import java.io.File;
-
 import java.util.*;
+
 
 public class ConvexHull implements Comparator<Points> {
 
-	static BST<Points> bstX = new BST<>();
-	static BST<Points> bstY = new BST<>();
+
 	static Stack<Points> st = new Stack<>();
 	static ArrayList<Points> array = new ArrayList<>();
-	static ArrayList<Points> arrX = new ArrayList<>();
 	static ArrayList<Points> arrY = new ArrayList<>();
-
 	public static void read(String fileName) {
 		try {
 			File path = new File(fileName);
@@ -20,14 +17,9 @@ public class ConvexHull implements Comparator<Points> {
 				int x = input.nextInt();
 				int y = input.nextInt();
 				Points p = new Points(x, y);
-				// add in bstX
-				bstX.insert(p.getX(), p);
-				// add in bstY
-				bstY.insert(p.getY(), p);
-				// add in array
+				
 				array.add(p);
 				arrY.add(p);
-				arrX.add(p);
 			}
 			input.close();
 		} catch (Exception e) {
@@ -36,26 +28,9 @@ public class ConvexHull implements Comparator<Points> {
 
 	}
 
-	public Points initMaxPoint() {
-		while (bstX.findKey(Integer.MAX_VALUE))
-			;
-		return bstX.retrieve();
-	}
 
-	public Points initMinPoint() {
-		while (bstX.findKey(Integer.MIN_VALUE))
-			;
-		return bstX.retrieve();
-	}
 
-	public Points extremeMaxPoint(Points p1, Points p2) {
 
-		return null;
-	}
-
-	public Points extremeMinPoint(Points p1, Points p2) {
-		return null;
-	}
 
 	public static double findDistance(Points p1, Points p2) {
 		return Math.sqrt(Math.pow(p2.getX() - p1.getX(), 2) + Math.pow(p2.getY() - p1.getY(), 2));
@@ -102,8 +77,9 @@ public class ConvexHull implements Comparator<Points> {
 	}
 
 	public static void main(String[] args) {
+
 		ConvexHull c = new ConvexHull();
-		//read("points.txt");
+		read("points.txt");
 		Points p1 = new Points(1, 4);
 		Points p2 = new Points(4, 1);
 		Points p3 = new Points(7, 4);
@@ -127,10 +103,10 @@ public class ConvexHull implements Comparator<Points> {
 //		System.out.println(ss.getX() + " " + ss.getY());
 		c.convexhull(arrY, 0, 3, p1, p3);
 		System.out.println(st.size());
-//		while(!st.isEmpty()){
-//			Points ss = st.pop();
-//			System.out.println(ss.getX() + " " + ss.getY());
-//		}		
+		while(!st.isEmpty()){
+			Points ss = st.pop();
+			System.out.println(ss.getX() + " " + ss.getY());
+		}		
 
 	}
 
@@ -149,13 +125,17 @@ public class ConvexHull implements Comparator<Points> {
 			int mid = (int)Math.floor(left+right) / 2;
 			
 			Points pmax = findExtreme(arrY, mid+1, right, p1, p2);
-			if (pmax != null)
+			if (pmax != null){
 				convexhull(arrY, mid + 1, right, p1, pmax);
+				convexhull(arrY, mid + 1, right, pmax, p2);
+			}
 			else
 				st.push(p2);
 			Points pmin = findExtreme(arrY, left, mid, p1, p2);
-			if (pmin != null)
+			if (pmin != null){
 				convexhull(arrY, left, mid, p1, pmin);
+				convexhull(arrY, left, mid, pmin, p2);				
+			}
 			else
 				return;
 			
